@@ -1,6 +1,4 @@
 from enum import Enum
-import uuid
-from pydantic import Field
 from foxypack.foxypack_abc.answers import (
     AnswersAnalysis,
     AnswersSocialContent,
@@ -14,7 +12,6 @@ class TwitterEnum(Enum):
 
 
 class TwitterAnswersAnalysis(AnswersAnalysis):
-    answer_id: str = Field(default_factory=lambda: uuid.uuid4().hex)
     code: str
 
 

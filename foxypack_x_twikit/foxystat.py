@@ -1,16 +1,13 @@
-from datetime import datetime
 import asyncio
-
-from twikitminifix import Client
+from datetime import datetime
 
 from foxy_entities import EntitiesController
-from foxy_entities.exceptions import PresenceObjectException
-
 from foxypack import (
     FoxyStat,
     InternalCollectionException,
     AnswersAnalysis,
 )
+from twikitminifix import Client, User, Tweet
 from typing_extensions import override
 
 from foxypack_x_twikit.answers import (
@@ -19,6 +16,7 @@ from foxypack_x_twikit.answers import (
     TwitterProfileAnswersStatistics,
 )
 from foxypack_x_twikit.entities import TwitterAccount
+from foxypack_x_twikit.utils import as_twitter_analysis
 
 
 class FoxyTwitterStat(FoxyStat):
@@ -28,10 +26,8 @@ class FoxyTwitterStat(FoxyStat):
     def _get_account(self) -> TwitterAccount:
         if self._entities_controller is None:
             raise InternalCollectionException
-        try:
-            return self._entities_controller.get_entity(TwitterAccount)
-        except PresenceObjectException:
-            raise InternalCollectionException
+
+        return self._entities_controller.get_entity(TwitterAccount)
 
     async def _get_client(self) -> Client:
         account = self._get_account()
@@ -47,11 +43,13 @@ class FoxyTwitterStat(FoxyStat):
             )
             client.save_cookies(account.cookies_file)
 
-        self._entities_controller.add_entity(account)
+        if self._entities_controller is not None:
+            self._entities_controller.add_entity(account)
+
         return client
 
     @staticmethod
-    def _profile_from_user(user, analysis: AnswersAnalysis) -> TwitterProfileAnswersStatistics:
+    def _profile_from_user(user: User, analysis: AnswersAnalysis) -> TwitterProfileAnswersStatistics:
         return TwitterProfileAnswersStatistics(
             title=user.name,
             user_id=user.id,
@@ -74,7 +72,7 @@ class FoxyTwitterStat(FoxyStat):
         )
 
     @staticmethod
-    def _tweet_from_tweet(tweet, analysis: AnswersAnalysis) -> TwitterTweetAnswersStatistics:
+    def _tweet_from_tweet(tweet: Tweet, analysis: AnswersAnalysis) -> TwitterTweetAnswersStatistics:
         return TwitterTweetAnswersStatistics(
             title=tweet.text[:50],
             tweet_id=tweet.id,
@@ -100,6 +98,8 @@ class FoxyTwitterStat(FoxyStat):
         if analysis.social_platform != "twitter":
             raise InternalCollectionException
 
+        analysis = as_twitter_analysis(analysis)
+
         client = await self._get_client()
 
         if analysis.type_content == TwitterEnum.profile.value:
@@ -110,7 +110,7 @@ class FoxyTwitterStat(FoxyStat):
             tweet = await client.get_tweet_by_id(analysis.code)
             return self._tweet_from_tweet(tweet, analysis)
 
-        raise InternalCollectionException
+        raise ValueError(f"Unsupported twitter content type: {analysis.type_content}")
 
     @override
     def get_statistics(

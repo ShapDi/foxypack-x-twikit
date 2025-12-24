@@ -13,6 +13,7 @@ license = {text = "MIT"}
 [project.optional-dependencies]
 dev = [
     "ruff>=0.14.0",
+    "mypy>=1.19.0"
 ]
 test = [
     "pytest>=9.0.2",
@@ -25,3 +26,10 @@ build-backend = "pdm.backend"
 
 [tool.pdm]
 distribution = true
+
+[tool.mypy]
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["twikitminifix.*"]
+ignore_missing_imports = true

@@ -8,7 +8,7 @@ from foxypack_x_twikit.answers import TwitterAnswersAnalysis, TwitterEnum
 
 class FoxyTwitterAnalysis(FoxyAnalysis):
     @staticmethod
-    def get_code(link: str) -> str | None:
+    def get_code(link: str) -> str:
         tweet_match = re.search(r"/status/(\d+)", link)
         if tweet_match:
             return tweet_match.group(1)
@@ -17,7 +17,7 @@ class FoxyTwitterAnalysis(FoxyAnalysis):
         if profile_match:
             return profile_match.group(1)
 
-        return None
+        return ''
 
     @staticmethod
     def clean_link(link: str) -> str:
