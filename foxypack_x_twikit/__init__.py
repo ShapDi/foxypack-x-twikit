@@ -1,7 +1,9 @@
-from foxypack_x_twikit.engine import (
-    TwitterAccount,
-    FoxyTwitterAnalysis,
-    FoxyTwitterStat,
-)
+from foxypack_x_twikit.entities import TwitterAccount
+from foxypack_x_twikit.foxyanalysis import FoxyTwitterAnalysis
+from foxypack_x_twikit.foxystat import FoxyTwitterStat
 
-__all__ = [TwitterAccount, FoxyTwitterAnalysis, FoxyTwitterStat]
+__all__ = [
+    "TwitterAccount",
+    "FoxyTwitterAnalysis",
+    "FoxyTwitterStat",
+]

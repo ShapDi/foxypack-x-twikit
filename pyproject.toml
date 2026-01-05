@@ -5,14 +5,19 @@ description = "Default template for PDM package"
 authors = [
     {name = "shapdi", email = "shapranov.work@gmail.com"},
 ]
-dependencies = ["foxypack>=0.0.7", "twikitminifix==2.3.7"]
-requires-python = ">=3.10"
+dependencies = ["foxypack>=0.0.11", "twikitminifix==2.3.7", "foxy-entities>=0.0.3"]
+requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
 
 [project.optional-dependencies]
 dev = [
     "ruff>=0.14.0",
+    "mypy>=1.19.0"
+]
+test = [
+    "pytest>=9.0.2",
+    "python-dotenv>=1.0.1"
 ]
 [build-system]
 requires = ["pdm-backend"]
@@ -21,3 +26,10 @@ build-backend = "pdm.backend"
 
 [tool.pdm]
 distribution = true
+
+[tool.mypy]
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["twikitminifix.*"]
+ignore_missing_imports = true
